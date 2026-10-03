@@ -1,10 +1,10 @@
 """Corrective answer loop for Q&A and solve requests, as a LangGraph state graph.
 
     retrieve -> grade_documents --(some relevant)--> generate -> check_hallucination -> check_answer -> END
-                     |                                  ^     |       | (not grounded:             | (doesn't answer;
-                     | (none relevant)                  |     |       |  retry once)               |  a hint is
-                     |                                  +-----|-------+                            |  returned as is)
-                     +--------------> web_search <------------+--- (still not grounded) -----------+
+                     |                                  ^     |       | (not grounded:   | (hint)    | (doesn't
+                     | (none relevant)                  |     |       |  retry once)     +--> END    |  answer)
+                     |                                  +-----|-------+                              |
+                     +--------------> web_search <------------+--- (still not grounded) -------------+
                                        / model_answer
 
 Sources are tried in order: course slides, then one round of web search, then (rarely) the model's own knowledge.
@@ -221,25 +221,13 @@ ANSWER_SCHEMA = {"type": "object", "properties": {"answers_question": {"type": "
                  "required": ["answers_question", "problem"], "additionalProperties": False}
 
 
-HINT_CHECK_SYSTEM = """You check a hint a tutor wrote for a student's exercise. answers_question: true only if
-the hint is useful (it gives the specific concept, formula, rule or step the exercise needs and connects it to
-the exercise) AND it does not give away the answer: no substituted working or results, no revealed option, and
-if the exercise asks to identify or name something, the hint must not name it. Stating a general formula or
-definition is fine. A level-2 hint may carry out the first step. problem: if false, one sentence; otherwise
-empty."""
-
-
 def is_hint(state):
     return state["plan"]["intent"] == "solve" and state["plan"]["mode"] == "hint"
 
 
 def answer_verdict(state):
-    """(ok, problem, trace note) of the answers-the-question check (for hints: useful and not giving it away)."""
-    if is_hint(state):
-        system, extra = HINT_CHECK_SYSTEM, f"\n\n<hint_level>{state['plan']['hint_level']}</hint_level>"
-    else:
-        system, extra = ANSWER_SYSTEM, ""
-    verdict = small_json(system, f"{asked(state)}{extra}\n\n<answer>\n{state['generation']}\n</answer>",
+    """(ok, problem, trace note) of the answers-the-question check (full answers only; hints skip it)."""
+    verdict = small_json(ANSWER_SYSTEM, f"{asked(state)}\n\n<answer>\n{state['generation']}\n</answer>",
                          ANSWER_SCHEMA)
     note = f"{state['source']} answer: answers question={verdict['answers_question']}" + \
         (f" ({verdict['problem']})" if verdict["problem"] else "")
@@ -256,11 +244,11 @@ def check_hallucination(state):
 
 
 def check_answer(state):
-    """Runs only on a grounded answer: does it answer what was asked (for a hint: useful, not giving it away)?"""
+    """Runs only on a grounded full answer (not on hints): does it answer what was asked?"""
     ok, problem, note = answer_verdict(state)
     if ok:
         return {"trace": state["trace"] + [note], "failed": "", "feedback": ""}
-    # a full answer that dodges the question needs better sources (next_source); a hint is returned as it is
+    # an answer that dodges the question needs better sources (next_source), not another try with the same ones
     return {"trace": state["trace"] + [note], "failed": "answer", "feedback": "not answered"}
 
 
@@ -301,15 +289,14 @@ def after_generate(state):
 
 
 def after_hallucination(state):
-    if not state["failed"]:
-        return "check_answer"
+    if not state["failed"]:  # a grounded hint is final: hints skip the answer check
+        return "end" if is_hint(state) else "check_answer"
     return "generate" if state["retries"] <= MAX_GENERATE_RETRIES else next_source(state)
 
 
 def after_answer(state):
-    """Passed, or a hint (hints have no fallback: the student gets it either way): done. A full answer that
-    doesn't answer the question moves on to the next source."""
-    if not state["failed"] or is_hint(state):
+    """Passed: done. A full answer that doesn't answer the question moves on to the next source."""
+    if not state["failed"]:
         return "end"
     return next_source(state)
 
