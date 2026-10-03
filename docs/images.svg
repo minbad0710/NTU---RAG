@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1460 560" role="img" aria-label="Images are not stored: each one is rendered from the original PDF when it is needed - exam pages for figure questions, figure slides as the answer loop's fallback, slides for the website viewer - and student uploads are deleted after reading.">
+  <style>
+    :root { --panel:#f6f8fa; --line:#57606a; --text:#1f2328; --sub:#57606a;
+            --gen:#fff4e5; --genB:#d97706; --chk:#eef4ff; --chkB:#3b6fd8; --inp:#e8f7ef; --inpB:#1f9d63;
+            --ans:#ffffff; --ansB:#8c959f; --dec:#f5efff; --decB:#8250df; --hint:#1f9d63; }
+    @media (prefers-color-scheme: dark) {
+      :root { --panel:#161b22; --line:#8b949e; --text:#e6edf3; --sub:#9aa4af;
+              --gen:#3a2716; --genB:#f0883e; --chk:#16233d; --chkB:#6e9bf5; --inp:#10301f; --inpB:#3fb97a;
+              --ans:#1c2128; --ansB:#8b949e; --dec:#271c3d; --decB:#b392f0; --hint:#3fb97a; }
+    }
+    .panel { fill: var(--panel); }
+    .box { stroke-width: 1.6; }
+    .inp { fill: var(--inp); stroke: var(--inpB); }
+    .gen { fill: var(--gen); stroke: var(--genB); }
+    .chk { fill: var(--chk); stroke: var(--chkB); }
+    .ans { fill: var(--ans); stroke: var(--ansB); }
+    .dec { fill: var(--dec); stroke: var(--decB); stroke-dasharray: 5 3; }
+    .t { fill: var(--text); font: 600 15px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .s { fill: var(--sub); font: 12.5px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .lab { fill: var(--sub); font: 12px ui-monospace, "SFMono-Regular", Consolas, monospace; }
+    .row { fill: var(--sub); font: 600 12.5px ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: .08em; }
+    .ln { stroke: var(--line); stroke-width: 1.5; fill: none; }
+    .hint { stroke: var(--hint); stroke-width: 1.5; fill: none; stroke-dasharray: 6 4; }
+    .hl { fill: var(--hint); font: 12px ui-monospace, "SFMono-Regular", Consolas, monospace; }
+    .ah { fill: var(--line); }
+    .ahh { fill: var(--hint); }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" class="ah" /></marker>
+    <marker id="h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" class="ahh" /></marker>
+  </defs>
+  <rect class="panel" x="0" y="0" width="1460" height="560" rx="14" />
+  <text class="row" x="24" y="86">EXAM</text>
+  <text class="row" x="24" y="104">FIGURES</text>
+  <text class="row" x="24" y="206">SLIDE</text>
+  <text class="row" x="24" y="224">FIGURES</text>
+  <text class="row" x="24" y="326">SLIDE</text>
+  <text class="row" x="24" y="344">VIEWER</text>
+  <text class="row" x="24" y="446">UPLOADS</text>
+  <rect class="box inp" x="150" y="60" width="170" height="62" rx="9" />
+  <text class="t" x="166" y="86.0">Past-paper part</text><text class="s" x="166" y="106.0">has_figure = true</text>
+  <rect class="box chk" x="370" y="60" width="170" height="62" rx="9" />
+  <text class="t" x="386" y="86.0">Find its pages</text><text class="s" x="386" y="106.0">from the chunk</text>
+  <rect class="box gen" x="590" y="60" width="170" height="62" rx="9" />
+  <text class="t" x="606" y="86.0">Render from PDF</text><text class="s" x="606" y="106.0">130 dpi, ≤ 3 pages</text>
+  <path class="ln" d="M320 91.0H368" marker-end="url(#a)" />
+  <path class="ln" d="M540 91.0H588" marker-end="url(#a)" />
+  <path class="ln" d="M760 91.0H1248" marker-end="url(#a)" />
+  <text class="lab" x="770" y="84.0">attached to the solve call from the start</text>
+  <rect class="box ans" x="1250" y="60" width="170" height="62" rx="9" />
+  <text class="t" x="1266" y="86.0">Sonnet sees</text><text class="s" x="1266" y="106.0">the real figure</text>
+  <rect class="box inp" x="150" y="180" width="170" height="62" rx="9" />
+  <text class="t" x="166" y="206.0">Kept slide chunks</text><text class="s" x="166" y="226.0">after a failed answer</text>
+  <rect class="box dec" x="370" y="180" width="170" height="62" rx="9" />
+  <text class="t" x="386" y="206.0">Has a figure?</text><text class="s" x="386" y="226.0">picture or diagram</text>
+  <rect class="box chk" x="590" y="180" width="170" height="62" rx="9" />
+  <text class="t" x="606" y="206.0">Drop animation</text><text class="s" x="606" y="226.0">≥ 88% same words</text>
+  <rect class="box gen" x="810" y="180" width="170" height="62" rx="9" />
+  <text class="t" x="826" y="206.0">Render from PDF</text><text class="s" x="826" y="226.0">100 dpi, ≤ 4 slides</text>
+  <path class="ln" d="M320 211.0H368" marker-end="url(#a)" />
+  <path class="ln" d="M540 211.0H588" marker-end="url(#a)" />
+  <path class="ln" d="M760 211.0H808" marker-end="url(#a)" />
+  <path class="ln" d="M980 211.0H1248" marker-end="url(#a)" />
+  <text class="lab" x="990" y="204.0">row 2 of the loop</text>
+  <rect class="box ans" x="1250" y="180" width="170" height="62" rx="9" />
+  <text class="t" x="1266" y="206.0">Generate + check</text><text class="s" x="1266" y="226.0">with the images</text>
+  <rect class="box inp" x="150" y="300" width="170" height="62" rx="9" />
+  <text class="t" x="166" y="326.0">Citation clicked</text><text class="s" x="166" y="346.0">on the website</text>
+  <rect class="box chk" x="370" y="300" width="170" height="62" rx="9" />
+  <text class="t" x="386" y="326.0">/api/slide</text><text class="s" x="386" y="346.0">course, file, page</text>
+  <rect class="box gen" x="590" y="300" width="170" height="62" rx="9" />
+  <text class="t" x="606" y="326.0">Render from PDF</text><text class="s" x="606" y="346.0">110 dpi PNG</text>
+  <path class="ln" d="M320 331.0H368" marker-end="url(#a)" />
+  <path class="ln" d="M540 331.0H588" marker-end="url(#a)" />
+  <path class="ln" d="M760 331.0H1248" marker-end="url(#a)" />
+  <text class="lab" x="770" y="324.0">path-checked: only files inside data/&lt;course&gt;/</text>
+  <rect class="box ans" x="1250" y="300" width="170" height="62" rx="9" />
+  <text class="t" x="1266" y="326.0">Slide viewer</text><text class="s" x="1266" y="346.0">browser caches 1 day</text>
+  <rect class="box inp" x="150" y="420" width="170" height="62" rx="9" />
+  <text class="t" x="166" y="446.0">Photo or PDF</text><text class="s" x="166" y="466.0">from the student</text>
+  <rect class="box chk" x="370" y="420" width="170" height="62" rx="9" />
+  <text class="t" x="386" y="446.0">Temporary file</text><text class="s" x="386" y="466.0">deleted after reading</text>
+  <rect class="box chk" x="590" y="420" width="170" height="62" rx="9" />
+  <text class="t" x="606" y="446.0">Read the text</text><text class="s" x="606" y="466.0">RapidOCR or PDF text</text>
+  <path class="ln" d="M320 451.0H368" marker-end="url(#a)" />
+  <path class="ln" d="M540 451.0H588" marker-end="url(#a)" />
+  <path class="ln" d="M760 451.0H1248" marker-end="url(#a)" />
+  <text class="lab" x="770" y="444.0">text → intent, course, search; file → the answer call</text>
+  <rect class="box ans" x="1250" y="420" width="170" height="62" rx="9" />
+  <text class="t" x="1266" y="446.0">Answer call</text><text class="s" x="1266" y="466.0">sees the file itself</text>
+  <text class="s" x="150" y="530">No image is saved: each is rendered from data/ when needed. Kept in memory: open PDFs (up to 64) and each checked slide's figure result.</text>
+</svg>

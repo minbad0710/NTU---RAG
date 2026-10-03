@@ -149,6 +149,25 @@ Details that matter:
 - **Exact references bypass search.** "AY2526 S2 Q1(15)" is looked up directly by year, semester, question and part (`Index.find_exam`), never by similarity.
 - **Rebuild after changing `data/`.** The tutor searches this saved copy, not the PDFs. Re-run `ocr_papers` (it skips papers already done) and then `build_index`.
 
+#### Images: rendered when needed, never stored
+
+Ingestion saves **no images**, only text, embeddings and the metadata that points back into the PDFs: each slide chunk's slide range, and each exam part's pages and `has_figure` flag. Whenever a picture is needed, the page is rendered **on the spot** from the original PDF in `data/` with PyMuPDF, used, and discarded.
+
+<p align="center">
+  <img src="docs/images.svg" width="100%" alt="Images are rendered from the original PDFs when needed: exam pages for figure questions, figure slides as the answer loop's fallback, single slides for the website viewer; student uploads are read and then deleted." />
+</p>
+
+| Image | When it's made | How ([figures.py](backend/answering/figures.py)) |
+|---|---|---|
+| **Scanned exam page** | solving a past-paper part flagged `has_figure` | its pages rendered at 130 dpi, at most 3, attached to the solve call from the start (skipped for the few papers scanned two pages per sheet, where OCR page numbers don't match the PDF) |
+| **Slide figures** | row 2 of the answer loop, after a text-only answer failed | the kept chunks' slides that have a figure, at 100 dpi, at most 4, each labelled `[Slide image: file, slide N]` |
+| **Slide in the viewer** | a student clicks a citation on the website | `/api/slide` renders that one slide at 110 dpi; the browser caches it for a day; only files inside `data/<course>/` are served |
+| **Student upload** | a photo or PDF in the chat | written to a temporary folder, read with RapidOCR or the PDF text layer, attached to the answer call, then deleted |
+
+**How a slide counts as having a figure:** a picture covering more than 15% of the slide, or 20 or more drawn shapes (vector diagrams; a text slide has about 1–10). Consecutive slides sharing at least 88% of their words are steps of one animation, so only the last frame is sent.
+
+**Why not store them at ingestion?** Rendering a page takes a fraction of a second and only a few are needed per question, whereas pre-rendering all 2,790 slide and exam pages would add hundreds of MB that go stale whenever a PDF changes. Resolution is a setting (`SLIDE_IMAGE_DPI`, `FIGURE_PAGE_DPI` in [config.py](backend/config.py)), so it can be tuned without rebuilding anything. The trade-off: `data/` must stay next to the index, because figures can't be shown from the index alone.
+
 ### 2. Understanding the request and picking the course
 
 <p align="center">

@@ -160,6 +160,57 @@ def ingestion():
     d.save("build-index.svg")
 
 
+def images():
+    d = Diagram(1460, 560, "Images are not stored: each one is rendered from the original PDF when it is needed - "
+                           "exam pages for figure questions, figure slides as the answer loop's fallback, slides for "
+                           "the website viewer - and student uploads are deleted after reading.")
+    r1, r2, r3, r4 = 60, 180, 300, 420
+    d.row(r1, "EXAM\nFIGURES")
+    d.row(r2, "SLIDE\nFIGURES")
+    d.row(r3, "SLIDE\nVIEWER")
+    d.row(r4, "UPLOADS")
+    # exam figures
+    d.box(COLS[0], r1, "Past-paper part", "has_figure = true", "inp")
+    d.box(COLS[1], r1, "Find its pages", "from the chunk")
+    d.box(COLS[2], r1, "Render from PDF", "130 dpi, ≤ 3 pages", "gen")
+    d.right(0, r1)
+    d.right(1, r1)
+    d.line(f"M{COLS[2] + W} {r1 + H / 2}H{COLS[5] - 2}")
+    d.text(COLS[2] + W + 10, r1 + H / 2 - 7, "attached to the solve call from the start")
+    d.box(COLS[5], r1, "Sonnet sees", "the real figure", "ans")
+    # slide figures
+    d.box(COLS[0], r2, "Kept slide chunks", "after a failed answer", "inp")
+    d.box(COLS[1], r2, "Has a figure?", "picture or diagram", "dec")
+    d.box(COLS[2], r2, "Drop animation", "≥ 88% same words", "chk")
+    d.box(COLS[3], r2, "Render from PDF", "100 dpi, ≤ 4 slides", "gen")
+    for c in range(3):
+        d.right(c, r2)
+    d.line(f"M{COLS[3] + W} {r2 + H / 2}H{COLS[5] - 2}")
+    d.text(COLS[3] + W + 10, r2 + H / 2 - 7, "row 2 of the loop")
+    d.box(COLS[5], r2, "Generate + check", "with the images", "ans")
+    # viewer
+    d.box(COLS[0], r3, "Citation clicked", "on the website", "inp")
+    d.box(COLS[1], r3, "/api/slide", "course, file, page")
+    d.box(COLS[2], r3, "Render from PDF", "110 dpi PNG", "gen")
+    d.right(0, r3)
+    d.right(1, r3)
+    d.line(f"M{COLS[2] + W} {r3 + H / 2}H{COLS[5] - 2}")
+    d.text(COLS[2] + W + 10, r3 + H / 2 - 7, "path-checked: only files inside data/<course>/")
+    d.box(COLS[5], r3, "Slide viewer", "browser caches 1 day", "ans")
+    # uploads
+    d.box(COLS[0], r4, "Photo or PDF", "from the student", "inp")
+    d.box(COLS[1], r4, "Temporary file", "deleted after reading")
+    d.box(COLS[2], r4, "Read the text", "RapidOCR or PDF text", "chk")
+    d.right(0, r4)
+    d.right(1, r4)
+    d.line(f"M{COLS[2] + W} {r4 + H / 2}H{COLS[5] - 2}")
+    d.text(COLS[2] + W + 10, r4 + H / 2 - 7, "text → intent, course, search; file → the answer call")
+    d.box(COLS[5], r4, "Answer call", "sees the file itself", "ans")
+    d.text(150, 530, "No image is saved: each is rendered from data/ when needed. Kept in memory: open PDFs (up to 64) "
+                     "and each checked slide's figure result.", cls="s")
+    d.save("images.svg")
+
+
 def routing():
     d = Diagram(1460, 520, "Routing: a course code wins, then the current course if the question still fits, then "
                            "the best-matching course; if two courses are close, the student is asked.")
@@ -304,6 +355,7 @@ def corrective_loop():
 if __name__ == "__main__":
     overview()
     ingestion()
+    images()
     routing()
     retrieval()
     corrective_loop()
