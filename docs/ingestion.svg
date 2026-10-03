@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1460 360" role="img" aria-label="Ingestion: slides are extracted and merged into chunks, past papers are OCR'd and split into question parts; both are embedded and keyword-indexed into one index.">
+  <style>
+    :root { --panel:#f6f8fa; --line:#57606a; --text:#1f2328; --sub:#57606a;
+            --gen:#fff4e5; --genB:#d97706; --chk:#eef4ff; --chkB:#3b6fd8; --inp:#e8f7ef; --inpB:#1f9d63;
+            --ans:#ffffff; --ansB:#8c959f; --dec:#f5efff; --decB:#8250df; --hint:#1f9d63; }
+    @media (prefers-color-scheme: dark) {
+      :root { --panel:#161b22; --line:#8b949e; --text:#e6edf3; --sub:#9aa4af;
+              --gen:#3a2716; --genB:#f0883e; --chk:#16233d; --chkB:#6e9bf5; --inp:#10301f; --inpB:#3fb97a;
+              --ans:#1c2128; --ansB:#8b949e; --dec:#271c3d; --decB:#b392f0; --hint:#3fb97a; }
+    }
+    .panel { fill: var(--panel); }
+    .box { stroke-width: 1.6; }
+    .inp { fill: var(--inp); stroke: var(--inpB); }
+    .gen { fill: var(--gen); stroke: var(--genB); }
+    .chk { fill: var(--chk); stroke: var(--chkB); }
+    .ans { fill: var(--ans); stroke: var(--ansB); }
+    .dec { fill: var(--dec); stroke: var(--decB); stroke-dasharray: 5 3; }
+    .t { fill: var(--text); font: 600 15px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .s { fill: var(--sub); font: 12.5px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .lab { fill: var(--sub); font: 12px ui-monospace, "SFMono-Regular", Consolas, monospace; }
+    .row { fill: var(--sub); font: 600 12.5px ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: .08em; }
+    .ln { stroke: var(--line); stroke-width: 1.5; fill: none; }
+    .hint { stroke: var(--hint); stroke-width: 1.5; fill: none; stroke-dasharray: 6 4; }
+    .hl { fill: var(--hint); font: 12px ui-monospace, "SFMono-Regular", Consolas, monospace; }
+    .ah { fill: var(--line); }
+    .ahh { fill: var(--hint); }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" class="ah" /></marker>
+    <marker id="h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" class="ahh" /></marker>
+  </defs>
+  <rect class="panel" x="0" y="0" width="1460" height="360" rx="14" />
+  <text class="row" x="24" y="96">LECTURE</text>
+  <text class="row" x="24" y="114">SLIDES</text>
+  <text class="row" x="24" y="256">PAST</text>
+  <text class="row" x="24" y="274">PAPERS</text>
+  <rect class="box inp" x="150" y="70" width="170" height="62" rx="9" />
+  <text class="t" x="166" y="96.0">64 slide decks</text><text class="s" x="166" y="116.0">text-based PDFs</text>
+  <rect class="box chk" x="370" y="70" width="170" height="62" rx="9" />
+  <text class="t" x="386" y="96.0">Extract text</text><text class="s" x="386" y="116.0">PyMuPDF</text>
+  <rect class="box gen" x="590" y="70" width="170" height="62" rx="9" />
+  <text class="t" x="606" y="96.0">Merge into chunks</text><text class="s" x="606" y="116.0">~1,200 chars, [slide N]</text>
+  <rect class="box inp" x="150" y="230" width="170" height="62" rx="9" />
+  <text class="t" x="166" y="256.0">75 past papers</text><text class="s" x="166" y="276.0">scanned images</text>
+  <rect class="box chk" x="370" y="230" width="170" height="62" rx="9" />
+  <text class="t" x="386" y="256.0">OCR</text><text class="s" x="386" y="276.0">RapidOCR, 200 dpi</text>
+  <rect class="box gen" x="590" y="230" width="170" height="62" rx="9" />
+  <text class="t" x="606" y="256.0">Split into parts</text><text class="s" x="606" y="276.0">Q2(b): stem, marks</text>
+  <path class="ln" d="M320 101.0H368" marker-end="url(#a)" />
+  <path class="ln" d="M540 101.0H588" marker-end="url(#a)" />
+  <path class="ln" d="M320 261.0H368" marker-end="url(#a)" />
+  <path class="ln" d="M540 261.0H588" marker-end="url(#a)" />
+  <text class="lab" x="598" y="152">skip near-empty slides,</text>
+  <text class="lab" x="598" y="168">hard-split dense ones</text>
+  <text class="lab" x="598" y="312">layout rules: margins,</text>
+  <text class="lab" x="598" y="328">indents, (6 marks)</text>
+  <path class="ln" d="M760 101.0H785" />
+  <path class="ln" d="M760 261.0H785" />
+  <path class="ln" d="M785 101.0V261.0" />
+  <path class="ln" d="M785 101.0H808" marker-end="url(#a)" />
+  <path class="ln" d="M785 261.0H808" marker-end="url(#a)" />
+  <rect class="box chk" x="810" y="70" width="170" height="62" rx="9" />
+  <text class="t" x="826" y="96.0">Embed</text><text class="s" x="826" y="116.0">bge-small, 384-d</text>
+  <rect class="box chk" x="810" y="230" width="170" height="62" rx="9" />
+  <text class="t" x="826" y="256.0">Keyword index</text><text class="s" x="826" y="276.0">BM25</text>
+  <path class="ln" d="M980 101.0H1248" marker-end="url(#a)" />
+  <path class="ln" d="M980 261.0H1248" marker-end="url(#a)" />
+  <rect class="box ans" x="1250" y="70" width="170" height="62" rx="9" />
+  <text class="t" x="1266" y="96.0">Index on disk</text><text class="s" x="1266" y="116.0">vectors.npy + chunks</text>
+  <rect class="box ans" x="1250" y="230" width="170" height="62" rx="9" />
+  <text class="t" x="1266" y="256.0">Built at startup</text><text class="s" x="1266" y="276.0">in memory, ~0.3 s</text>
+  <text class="lab" x="990" y="94.0">1,879 chunks: 962 slide + 917 exam</text>
+  <text class="lab" x="990" y="254.0">same text, exact terms</text>
+</svg>

@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1460 560" role="img" aria-label="Whole pipeline: the message is read, its intent and course found, slides and past papers searched, then one of three paths produces the answer.">
+  <style>
+    :root { --panel:#f6f8fa; --line:#57606a; --text:#1f2328; --sub:#57606a;
+            --gen:#fff4e5; --genB:#d97706; --chk:#eef4ff; --chkB:#3b6fd8; --inp:#e8f7ef; --inpB:#1f9d63;
+            --ans:#ffffff; --ansB:#8c959f; --dec:#f5efff; --decB:#8250df; --hint:#1f9d63; }
+    @media (prefers-color-scheme: dark) {
+      :root { --panel:#161b22; --line:#8b949e; --text:#e6edf3; --sub:#9aa4af;
+              --gen:#3a2716; --genB:#f0883e; --chk:#16233d; --chkB:#6e9bf5; --inp:#10301f; --inpB:#3fb97a;
+              --ans:#1c2128; --ansB:#8b949e; --dec:#271c3d; --decB:#b392f0; --hint:#3fb97a; }
+    }
+    .panel { fill: var(--panel); }
+    .box { stroke-width: 1.6; }
+    .inp { fill: var(--inp); stroke: var(--inpB); }
+    .gen { fill: var(--gen); stroke: var(--genB); }
+    .chk { fill: var(--chk); stroke: var(--chkB); }
+    .ans { fill: var(--ans); stroke: var(--ansB); }
+    .dec { fill: var(--dec); stroke: var(--decB); stroke-dasharray: 5 3; }
+    .t { fill: var(--text); font: 600 15px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .s { fill: var(--sub); font: 12.5px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .lab { fill: var(--sub); font: 12px ui-monospace, "SFMono-Regular", Consolas, monospace; }
+    .row { fill: var(--sub); font: 600 12.5px ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: .08em; }
+    .ln { stroke: var(--line); stroke-width: 1.5; fill: none; }
+    .hint { stroke: var(--hint); stroke-width: 1.5; fill: none; stroke-dasharray: 6 4; }
+    .hl { fill: var(--hint); font: 12px ui-monospace, "SFMono-Regular", Consolas, monospace; }
+    .ah { fill: var(--line); }
+    .ahh { fill: var(--hint); }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" class="ah" /></marker>
+    <marker id="h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" class="ahh" /></marker>
+  </defs>
+  <rect class="panel" x="0" y="0" width="1460" height="560" rx="14" />
+  <text class="row" x="24" y="86">UNDERSTAND</text>
+  <text class="row" x="24" y="104">&amp; SEARCH</text>
+  <rect class="box inp" x="150" y="60" width="170" height="62" rx="9" />
+  <text class="t" x="166" y="86.0">Student message</text><text class="s" x="166" y="106.0">text, photo or PDF</text>
+  <rect class="box chk" x="370" y="60" width="170" height="62" rx="9" />
+  <text class="t" x="386" y="86.0">Read attachment</text><text class="s" x="386" y="106.0">RapidOCR, if a file</text>
+  <rect class="box chk" x="590" y="60" width="170" height="62" rx="9" />
+  <text class="t" x="606" y="86.0">Detect intent</text><text class="s" x="606" y="106.0">rules, no model call</text>
+  <rect class="box chk" x="810" y="60" width="170" height="62" rx="9" />
+  <text class="t" x="826" y="86.0">Pick the course</text><text class="s" x="826" y="106.0">router</text>
+  <rect class="box chk" x="1030" y="60" width="170" height="62" rx="9" />
+  <text class="t" x="1046" y="86.0">Hybrid search</text><text class="s" x="1046" y="106.0">slides + past papers</text>
+  <path class="ln" d="M320 91.0H368" marker-end="url(#a)" />
+  <path class="ln" d="M540 91.0H588" marker-end="url(#a)" />
+  <path class="ln" d="M760 91.0H808" marker-end="url(#a)" />
+  <path class="ln" d="M980 91.0H1028" marker-end="url(#a)" />
+  <path class="ln" d="M1115.0 122V170H480V481" />
+  <text class="row" x="24" y="256">PAST_PAPER</text>
+  <path class="ln" d="M480 261.0H588" marker-end="url(#a)" />
+  <rect class="box chk" x="590" y="230" width="390" height="62" rx="9" />
+  <text class="t" x="606" y="256.0">List real past-year questions</text><text class="s" x="606" y="276.0">index search only, no model</text>
+  <path class="ln" d="M980 261.0H1248" marker-end="url(#a)" />
+  <rect class="box ans" x="1250" y="230" width="170" height="62" rx="9" />
+  <text class="t" x="1266" y="256.0">Answer</text><text class="s" x="1266" y="276.0">exam questions + marks</text>
+  <text class="row" x="24" y="366">GENERATE</text>
+  <path class="ln" d="M480 371.0H588" marker-end="url(#a)" />
+  <rect class="box gen" x="590" y="340" width="390" height="62" rx="9" />
+  <text class="t" x="606" y="366.0">Write practice questions</text><text class="s" x="606" y="386.0">Claude Sonnet, streamed</text>
+  <path class="ln" d="M980 371.0H1248" marker-end="url(#a)" />
+  <rect class="box ans" x="1250" y="340" width="170" height="62" rx="9" />
+  <text class="t" x="1266" y="366.0">Answer</text><text class="s" x="1266" y="386.0">questions + answers</text>
+  <text class="row" x="24" y="476">QA / SOLVE</text>
+  <path class="ln" d="M480 481.0H588" marker-end="url(#a)" />
+  <rect class="box gen" x="590" y="450" width="390" height="62" rx="9" />
+  <text class="t" x="606" y="476.0">Corrective answer loop</text><text class="s" x="606" y="496.0">slides → figures → web → model</text>
+  <path class="ln" d="M980 481.0H1248" marker-end="url(#a)" />
+  <rect class="box ans" x="1250" y="450" width="170" height="62" rx="9" />
+  <text class="t" x="1266" y="476.0">Answer</text><text class="s" x="1266" y="496.0">checked, with its sources</text>
+  <text class="lab" x="150" y="266">"Past year questions</text>
+  <text class="lab" x="150" y="282">on deadlock"</text>
+  <text class="lab" x="150" y="376">"Give me 2 practice</text>
+  <text class="lab" x="150" y="392">questions on paging"</text>
+  <text class="lab" x="150" y="486">"Explain CRC" or</text>
+  <text class="lab" x="150" y="502">"Hint for AY2526 Q1"</text>
+  <text class="lab" x="990" y="254">no model call: instant</text>
+  <text class="lab" x="990" y="474">see the answer loop below</text>
+</svg>

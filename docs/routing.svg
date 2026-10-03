@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1460 520" role="img" aria-label="Routing: a course code wins, then the current course if the question still fits, then the best-matching course; if two courses are close, the student is asked.">
+  <style>
+    :root { --panel:#f6f8fa; --line:#57606a; --text:#1f2328; --sub:#57606a;
+            --gen:#fff4e5; --genB:#d97706; --chk:#eef4ff; --chkB:#3b6fd8; --inp:#e8f7ef; --inpB:#1f9d63;
+            --ans:#ffffff; --ansB:#8c959f; --dec:#f5efff; --decB:#8250df; --hint:#1f9d63; }
+    @media (prefers-color-scheme: dark) {
+      :root { --panel:#161b22; --line:#8b949e; --text:#e6edf3; --sub:#9aa4af;
+              --gen:#3a2716; --genB:#f0883e; --chk:#16233d; --chkB:#6e9bf5; --inp:#10301f; --inpB:#3fb97a;
+              --ans:#1c2128; --ansB:#8b949e; --dec:#271c3d; --decB:#b392f0; --hint:#3fb97a; }
+    }
+    .panel { fill: var(--panel); }
+    .box { stroke-width: 1.6; }
+    .inp { fill: var(--inp); stroke: var(--inpB); }
+    .gen { fill: var(--gen); stroke: var(--genB); }
+    .chk { fill: var(--chk); stroke: var(--chkB); }
+    .ans { fill: var(--ans); stroke: var(--ansB); }
+    .dec { fill: var(--dec); stroke: var(--decB); stroke-dasharray: 5 3; }
+    .t { fill: var(--text); font: 600 15px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .s { fill: var(--sub); font: 12.5px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .lab { fill: var(--sub); font: 12px ui-monospace, "SFMono-Regular", Consolas, monospace; }
+    .row { fill: var(--sub); font: 600 12.5px ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: .08em; }
+    .ln { stroke: var(--line); stroke-width: 1.5; fill: none; }
+    .hint { stroke: var(--hint); stroke-width: 1.5; fill: none; stroke-dasharray: 6 4; }
+    .hl { fill: var(--hint); font: 12px ui-monospace, "SFMono-Regular", Consolas, monospace; }
+    .ah { fill: var(--line); }
+    .ahh { fill: var(--hint); }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" class="ah" /></marker>
+    <marker id="h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" class="ahh" /></marker>
+  </defs>
+  <rect class="panel" x="0" y="0" width="1460" height="520" rx="14" />
+  <text class="row" x="24" y="86">1 · NAMED</text>
+  <text class="row" x="24" y="206">2 · STICKY</text>
+  <text class="row" x="24" y="326">3 · BEST</text>
+  <text class="row" x="24" y="344">MATCH</text>
+  <text class="row" x="24" y="446">4 · UNSURE</text>
+  <rect class="box inp" x="150" y="60" width="170" height="62" rx="9" />
+  <text class="t" x="166" y="96.0">Message</text>
+  <rect class="box dec" x="370" y="60" width="170" height="62" rx="9" />
+  <text class="t" x="386" y="86.0">Course code?</text><text class="s" x="386" y="106.0">SC2008, CE2008, CZ2008</text>
+  <path class="ln" d="M320 91.0H368" marker-end="url(#a)" />
+  <path class="ln" d="M540 91.0H1248" marker-end="url(#a)" />
+  <text class="lab" x="548" y="84.0">yes</text>
+  <rect class="box ans" x="1250" y="60" width="170" height="62" rx="9" />
+  <text class="t" x="1266" y="86.0">Course</text><text class="s" x="1266" y="106.0">the one named</text>
+  <path class="ln" d="M455.0 122V178" marker-end="url(#a)" />
+  <text class="lab" x="461.0" y="156">no</text>
+  <rect class="box dec" x="370" y="180" width="170" height="62" rx="9" />
+  <text class="t" x="386" y="206.0">Current course?</text><text class="s" x="386" y="226.0">still ≥ 10% likely</text>
+  <path class="ln" d="M540 211.0H1248" marker-end="url(#a)" />
+  <text class="lab" x="548" y="204.0">yes: shared terms stay with the course you're studying</text>
+  <rect class="box ans" x="1250" y="180" width="170" height="62" rx="9" />
+  <text class="t" x="1266" y="206.0">Course</text><text class="s" x="1266" y="226.0">stay on it</text>
+  <path class="ln" d="M455.0 242V298" marker-end="url(#a)" />
+  <text class="lab" x="461.0" y="276">no, or none yet</text>
+  <rect class="box chk" x="370" y="300" width="170" height="62" rx="9" />
+  <text class="t" x="386" y="326.0">Score courses</text><text class="s" x="386" y="346.0">best chunk → softmax</text>
+  <path class="ln" d="M540 331.0H588" marker-end="url(#a)" />
+  <rect class="box dec" x="590" y="300" width="170" height="62" rx="9" />
+  <text class="t" x="606" y="326.0">Top two close?</text><text class="s" x="606" y="346.0">within 0.3</text>
+  <path class="ln" d="M760 331.0H1248" marker-end="url(#a)" />
+  <text class="lab" x="768" y="324.0">no</text>
+  <rect class="box ans" x="1250" y="300" width="170" height="62" rx="9" />
+  <text class="t" x="1266" y="326.0">Course</text><text class="s" x="1266" y="346.0">the top one</text>
+  <path class="ln" d="M675.0 362V451.0H1248" marker-end="url(#a)" />
+  <text class="lab" x="681.0" y="396">yes</text>
+  <rect class="box ans" x="1250" y="420" width="170" height="62" rx="9" />
+  <text class="t" x="1266" y="446.0">Ask the student</text><text class="s" x="1266" y="466.0">SC2005 or SC2107?</text>
+  <text class="s" x="150" y="500">Measured: right course 92%, asks 7%, wrong 0.6%. Once the student picks, the original question is answered.</text>
+</svg>

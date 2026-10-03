@@ -43,20 +43,9 @@ Revising for an NTU exam usually means flipping through hundreds of slides and a
 
 Every message goes through the same steps. The rule-based steps are free and run locally; paid model calls are used only where the free option measurably fell short.
 
-```mermaid
-flowchart LR
-    U([Student message<br/>text, photo or PDF]) --> A[Read attachment<br/>RapidOCR]
-    A --> I[Understand the request<br/>intent rules]
-    I --> R[Pick the course<br/>router]
-    R --> S[Search slides and<br/>past papers<br/>hybrid retrieval]
-    S --> D{Intent}
-    D -- past_paper --> P[List real<br/>past-year questions]
-    D -- generate --> G[Write practice<br/>questions<br/>Claude Sonnet]
-    D -- qa / solve --> C[Corrective answer loop<br/>slides → figures → web → model<br/>with checks]
-    P --> O([Streamed to the website<br/>with sources])
-    G --> O
-    C --> O
-```
+<p align="center">
+  <img src="docs/pipeline-overview.svg" width="100%" alt="Whole pipeline: the student's message is read, its intent detected, its course picked and the slides and past papers searched; then past-year lookups, practice-question generation and explanations or exercises each take their own path to an answer." />
+</p>
 
 There are four kinds of request (intents), detected with rules, no model call:
 
@@ -81,19 +70,9 @@ There are four kinds of request (intents), detected with rules, no model call:
 
 ### 1. Ingestion: turning PDFs into a search index (offline)
 
-```mermaid
-flowchart LR
-    L[Lecture slides<br/>64 decks] --> X[Extract text<br/>PyMuPDF]
-    X --> CH[Merge slides into<br/>~1,200-character chunks]
-    E[Scanned past papers<br/>75 papers] --> OCR[RapidOCR<br/>200 dpi]
-    OCR --> SP[Split into question parts<br/>layout rules: Q2, b, marks]
-    CH --> EMB[Embed<br/>bge-small]
-    SP --> EMB
-    CH --> BM[BM25<br/>keyword index]
-    SP --> BM
-    EMB --> IDX[(Index<br/>1,879 chunks)]
-    BM --> IDX
-```
+<p align="center">
+  <img src="docs/ingestion.svg" width="100%" alt="Ingestion: 64 slide decks are extracted and merged into chunks; 75 scanned past papers are OCR'd and split into question parts; both are embedded with bge-small and indexed with BM25." />
+</p>
 
 #### How lecture slides are chunked
 
@@ -165,38 +144,18 @@ Details that matter:
 
 ### 2. Understanding the request and picking the course
 
-```mermaid
-flowchart TD
-    Q[Message] --> REF{Course code<br/>in the message?}
-    REF -- yes --> FIX[Use that course]
-    REF -- no --> STICK{Still about the<br/>current course?}
-    STICK -- yes --> CUR[Stay on it]
-    STICK -- no --> BEST[Best-matching chunk<br/>in each course → probabilities]
-    BEST --> MARGIN{Top two courses<br/>within 0.3?}
-    MARGIN -- yes --> ASK[Ask the student:<br/>SC2005 or SC2107?]
-    MARGIN -- no --> TOP[Use the top course]
-```
+<p align="center">
+  <img src="docs/routing.svg" width="100%" alt="Routing: a course code in the message wins; otherwise the current course if the question still fits; otherwise the best-matching course, or the student is asked when the top two are close." />
+</p>
 
 - **Rules, not a model**, decide the intent, and parse references like `AY2526 S2 Q1(15)`, "another hint" and "full solution". They get the intent right on 100% of the test set.
 - **One course per answer.** A course code wins; otherwise the conversation stays on its course while the question still fits; otherwise the course whose best slide matches best. A shared term such as "interrupt" therefore stays with the course you are studying.
 
 ### 3. Retrieval: hybrid search
 
-```mermaid
-flowchart LR
-    Q[Search query] --> BROAD{Broad or<br/>multi-part?}
-    BROAD -- broad --> SB[3 step-back rewrites<br/>qwen2.5:3b]
-    BROAD -- multi-part --> DEC[Split into<br/>sub-questions<br/>qwen2.5:3b]
-    BROAD -- no --> Q1[Query as typed]
-    SB --> V
-    DEC --> V
-    Q1 --> V
-    V[Embed queries<br/>bge-small] --> COS[Cosine ranking]
-    Q1 --> KW[BM25 keyword ranking<br/>exact terms: CSMA/CD,<br/>TA0CCR0, 802.11]
-    COS --> RRF[Reciprocal rank fusion]
-    KW --> RRF
-    RRF --> TOP[Top 6 chunks<br/>12 for broad questions]
-```
+<p align="center">
+  <img src="docs/retrieval.svg" width="100%" alt="Retrieval: the query, its step-back rewrites or its sub-questions are embedded for a cosine ranking; the student's own wording also gets a BM25 keyword ranking; the two are merged with reciprocal rank fusion into the top chunks." />
+</p>
 
 - **Two searches run side by side and are merged.** Embeddings understand paraphrases ("how does the CPU stop what it's doing" → interrupts). BM25 matches special terms one-to-one, such as register names, acronyms and standards, which embeddings blur. Reciprocal rank fusion merges the two rankings.
 - **Broad questions** ("Explain the data link layer") are detected by a specificity score: how rare the question's words are, plus how clearly one slide stands out. They get three step-back rewrites from a small local model, so the answer covers the whole topic.
@@ -335,7 +294,7 @@ backend/                 Python: the RAG pipeline and its web API
     practice.py          practice-question generation
     session.py           one conversation: state between turns, events for the UI
 frontend/                React + Vite website
-docs/                    diagrams used in this README
+docs/                    README diagrams (SVG), drawn by docs/diagrams.py
 eval/                    evaluation scripts, test sets (datasets/) and cached results (results/)
 demo/                    demo video and GIF
 data/                    course PDFs: data/<course>/ slides and *_Questions.pdf papers (not in git)

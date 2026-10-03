@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1460 540" role="img" aria-label="Retrieval: the query, its step-back rewrites or sub-questions are embedded for a cosine ranking; the student's own wording also gets a BM25 ranking; both are merged with RRF.">
+  <style>
+    :root { --panel:#f6f8fa; --line:#57606a; --text:#1f2328; --sub:#57606a;
+            --gen:#fff4e5; --genB:#d97706; --chk:#eef4ff; --chkB:#3b6fd8; --inp:#e8f7ef; --inpB:#1f9d63;
+            --ans:#ffffff; --ansB:#8c959f; --dec:#f5efff; --decB:#8250df; --hint:#1f9d63; }
+    @media (prefers-color-scheme: dark) {
+      :root { --panel:#161b22; --line:#8b949e; --text:#e6edf3; --sub:#9aa4af;
+              --gen:#3a2716; --genB:#f0883e; --chk:#16233d; --chkB:#6e9bf5; --inp:#10301f; --inpB:#3fb97a;
+              --ans:#1c2128; --ansB:#8b949e; --dec:#271c3d; --decB:#b392f0; --hint:#3fb97a; }
+    }
+    .panel { fill: var(--panel); }
+    .box { stroke-width: 1.6; }
+    .inp { fill: var(--inp); stroke: var(--inpB); }
+    .gen { fill: var(--gen); stroke: var(--genB); }
+    .chk { fill: var(--chk); stroke: var(--chkB); }
+    .ans { fill: var(--ans); stroke: var(--ansB); }
+    .dec { fill: var(--dec); stroke: var(--decB); stroke-dasharray: 5 3; }
+    .t { fill: var(--text); font: 600 15px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .s { fill: var(--sub); font: 12.5px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .lab { fill: var(--sub); font: 12px ui-monospace, "SFMono-Regular", Consolas, monospace; }
+    .row { fill: var(--sub); font: 600 12.5px ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: .08em; }
+    .ln { stroke: var(--line); stroke-width: 1.5; fill: none; }
+    .hint { stroke: var(--hint); stroke-width: 1.5; fill: none; stroke-dasharray: 6 4; }
+    .hl { fill: var(--hint); font: 12px ui-monospace, "SFMono-Regular", Consolas, monospace; }
+    .ah { fill: var(--line); }
+    .ahh { fill: var(--hint); }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" class="ah" /></marker>
+    <marker id="h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" class="ahh" /></marker>
+  </defs>
+  <rect class="panel" x="0" y="0" width="1460" height="540" rx="14" />
+  <text class="row" x="24" y="86">BROAD</text>
+  <text class="row" x="24" y="206">AS TYPED</text>
+  <text class="row" x="24" y="326">MULTI-PART</text>
+  <text class="row" x="24" y="446">KEYWORDS</text>
+  <rect class="box inp" x="150" y="180" width="170" height="62" rx="9" />
+  <text class="t" x="166" y="206.0">Search query</text><text class="s" x="166" y="226.0">the student's topic</text>
+  <path class="ln" d="M320 211.0H368" marker-end="url(#a)" />
+  <rect class="box dec" x="370" y="180" width="170" height="62" rx="9" />
+  <text class="t" x="386" y="206.0">Broad or multi?</text><text class="s" x="386" y="226.0">specificity score, cues</text>
+  <rect class="box gen" x="590" y="60" width="170" height="62" rx="9" />
+  <text class="t" x="606" y="86.0">3 step-back rewrites</text><text class="s" x="606" y="106.0">qwen2.5:3b, local</text>
+  <rect class="box chk" x="590" y="180" width="170" height="62" rx="9" />
+  <text class="t" x="606" y="206.0">Query as typed</text><text class="s" x="606" y="226.0">most questions</text>
+  <rect class="box gen" x="590" y="300" width="170" height="62" rx="9" />
+  <text class="t" x="606" y="326.0">Sub-questions</text><text class="s" x="606" y="346.0">qwen2.5:3b, local</text>
+  <path class="ln" d="M455.0 180V91.0H588" marker-end="url(#a)" />
+  <text class="lab" x="463.0" y="84.0">broad</text>
+  <path class="ln" d="M540 211.0H588" marker-end="url(#a)" />
+  <text class="lab" x="546" y="204.0">no</text>
+  <path class="ln" d="M455.0 242V331.0H588" marker-end="url(#a)" />
+  <text class="lab" x="463.0" y="324.0">multi-part</text>
+  <rect class="box chk" x="810" y="180" width="170" height="62" rx="9" />
+  <text class="t" x="826" y="206.0">Embed + cosine</text><text class="s" x="826" y="226.0">bge-small, one ranking</text>
+  <path class="ln" d="M760 91.0H850V178" marker-end="url(#a)" />
+  <path class="ln" d="M760 211.0H808" marker-end="url(#a)" />
+  <path class="ln" d="M760 331.0H850V244" marker-end="url(#a)" />
+  <path class="ln" d="M235.0 242V451.0H808" marker-end="url(#a)" />
+  <text class="lab" x="243.0" y="444.0">the student's own wording only</text>
+  <rect class="box chk" x="810" y="420" width="170" height="62" rx="9" />
+  <text class="t" x="826" y="446.0">BM25 ranking</text><text class="s" x="826" y="466.0">exact keyword match</text>
+  <text class="lab" x="810" y="502">e.g. CSMA/CD, TA0CCR0, 802.11</text>
+  <rect class="box gen" x="1030" y="300" width="170" height="62" rx="9" />
+  <text class="t" x="1046" y="326.0">RRF merge</text><text class="s" x="1046" y="346.0">rank fusion, k = 60</text>
+  <path class="ln" d="M980 211.0H1115.0V298" marker-end="url(#a)" />
+  <path class="ln" d="M980 451.0H1115.0V364" marker-end="url(#a)" />
+  <text class="lab" x="988" y="204.0">per query</text>
+  <text class="lab" x="988" y="444.0">in parallel</text>
+  <path class="ln" d="M1200 331.0H1248" marker-end="url(#a)" />
+  <rect class="box ans" x="1250" y="300" width="170" height="62" rx="9" />
+  <text class="t" x="1266" y="326.0">Top chunks</text><text class="s" x="1266" y="346.0">6, or 12 when broad</text>
+  <text class="lab" x="1250" y="382">only the chosen course</text>
+  <text class="lab" x="590" y="382">both are searched together</text>
+  <text class="lab" x="590" y="398">with the original query</text>
+</svg>
