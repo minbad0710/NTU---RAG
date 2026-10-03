@@ -95,9 +95,73 @@ flowchart LR
     BM --> IDX
 ```
 
-- **Slides** are merged into chunks of about 1,200 characters, keeping the slide numbers so answers can cite them.
-- **Past papers** are scans, so they are OCR'd locally. Layout rules then split each paper into question parts such as `Q2(b)`, with marks, year and semester, and a flag for parts that refer to a figure. Rotated two-page scans and watermarks are handled.
-- The index holds **962 slide chunks and 917 exam question parts**. Search is a single numpy matrix multiply, so no vector database is needed.
+#### How lecture slides are chunked
+
+A single slide is usually too short to search well ("Insertion Sort · Idea · ▶ sorted part"), and a whole deck is far too long. So consecutive slides are **merged into chunks of about 1,200 characters**:
+
+1. Extract each slide's text with PyMuPDF and collapse extra spaces and blank lines.
+2. **Skip near-empty slides** (under 20 characters: title cards, section dividers, image-only slides).
+3. Add slides to the current chunk, each prefixed with a marker such as `[slide 8]`, until the next one would push it past 1,200 characters; then start a new chunk.
+4. A single very dense slide that goes over 2,400 characters is **hard-split**, so no chunk grows unbounded.
+5. Each chunk records its course, file and slide range (`"pages": "8-13"`).
+
+The `[slide N]` markers are what let an answer cite `(01_Sorting.pdf, slide 11)` and let the website open that exact slide. Chunks never cross a deck boundary.
+
+In the current index, a lecture chunk has a median of **1,024 characters and 2 slides** (10% are under 581 characters, 10% over 1,561; the largest covers 11 short slides).
+
+#### How past papers are split into questions
+
+Past papers are scanned images, so they are read with **RapidOCR** at 200 dpi (local and free) and saved to `ocr/` with each line's position and confidence. Then [exams.py](backend/ingest/exams.py) rebuilds the question structure from the page layout:
+
+1. **Clean the lines.** Drop low-confidence OCR (mostly text garbled by the diagonal library watermark), the watermark text itself, course-code headers and page numbers; sort lines into reading order.
+2. **Find the end.** Stop at "END OF PAPER", so the exam-hall instructions that follow aren't indexed.
+3. **Find questions and parts** by position: question numbers at the left margin (`1.`, `Q1.`, or `2` when OCR drops the dot), and parts one indent in (`(a)`, or `(1)` for numbered multiple-choice items). The cover page's numbered instructions have no marks and are dropped.
+4. **One chunk per top-level part**, e.g. `Q2(b)`, including its sub-parts `(i)`, `(ii)` and **the question's shared stem**, so the part makes sense on its own. Multiple-choice items are kept self-contained.
+5. **Attach metadata:** year and semester (from the file name), marks (summed from `(6 marks)`; a multiple-choice block's total is shared equally), the pages it spans, and `has_figure` when the text refers to a `Figure Q2` or `Table`.
+
+Odd cases are handled: online papers with decimal marks (`2.5 marks`), parts whose label OCR missed, and two exam pages scanned sideways onto one page.
+
+A question part has a median of **416 characters**. 913 of the 917 parts have marks, and 266 refer to a figure. For those, the scanned page is attached when the question is solved.
+
+#### The index
+
+Everything above becomes one searchable index, built by `python -m backend.ingest.build_index` and stored in `index/<embedding model>/`:
+
+| File | What it holds | Size |
+|---|---|---|
+| `chunks.json` | the 1,879 chunks: text plus metadata | 2.0 MB |
+| `vectors.npy` | one 384-dimension `bge-small` embedding per chunk, in the same order, normalised to length 1 | 2.8 MB |
+
+| Course | Lecture chunks | Exam question parts | Past papers |
+|---|---|---|---|
+| SC2001 Algorithms | 136 | 245 | 18 |
+| SC2005 Operating Systems | 137 | 132 | 10 |
+| SC2006 Software Engineering | 126 | 196 | 18 |
+| SC2008 Computer Networks | 102 | 199 | 17 |
+| SC2107 Microprocessors | 461 | 145 | 12 |
+| **Total** | **962** | **917** | **75** |
+
+What a chunk looks like:
+
+```jsonc
+// a lecture chunk
+{"course": "SC2001", "source": "01_Sorting.pdf", "kind": "lecture", "pages": "8-13",
+ "text": "[slide 8]\nInsertion Sort\nIdea ..."}
+
+// an exam question part: the same shape, plus exam metadata
+{"course": "SC2001", "source": "SC2001_AY1516_S1_Questions.pdf", "kind": "exam", "pages": "3-3",
+ "label": "Q2(b)", "year": "AY2015/16", "sem": 1, "marks": 4.0, "has_figure": false,
+ "text": "Given two functions f(n) and g(n) such that f(n) ∈ O(g(n)), ..."}
+```
+
+Details that matter:
+
+- **What gets embedded is the file name plus the text** (`"01_Sorting.pdf\n[slide 8] ..."`), so deck titles such as "Deadlocks" or "Shortest Path" help matching.
+- **Slides and exam parts share one index** but are told apart by `kind`. A search asks for one kind: slides to answer from, or exam parts for past-year lookups and "similar past questions".
+- **At startup the index loads into memory** (about 0.3 s) and builds three helpers: the **BM25 keyword index** over the same text, word document-frequencies for the broad-question score, and arrays of each chunk's course and kind so a search can be limited to one course.
+- **Search is brute force:** one numpy matrix multiply compares the query with all 1,879 vectors in under a millisecond. At this size a vector database would only add moving parts.
+- **Exact references bypass search.** "AY2526 S2 Q1(15)" is looked up directly by year, semester, question and part (`Index.find_exam`), never by similarity.
+- **Rebuild after changing `data/`.** The tutor searches this saved copy, not the PDFs. Re-run `ocr_papers` (it skips papers already done) and then `build_index`.
 
 ### 2. Understanding the request and picking the course
 
