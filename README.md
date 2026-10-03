@@ -219,8 +219,7 @@ flowchart TD
     FIX1 --> GEN
     HAL -- no, again --> NEXT
     ANS -- yes --> DONE([Answer + sources])
-    ANS -- hint gives too much,<br/>first time --> FIX2[Rewrite the hint<br/>with the checker's comment]
-    FIX2 --> GEN
+    ANS -- no, but it's a hint --> DONE
     ANS -- no --> NEXT{5. Next source}
     NEXT -- slides had figures --> IMG[Retry with the<br/>slide images]
     IMG --> GEN
@@ -236,14 +235,14 @@ flowchart TD
 1. **Grade chunks** (Claude Haiku). Search always returns its top 6 chunks, even when some are off-topic. The grader reads the question and each whole chunk, and keeps any that could help: definitions, background, related examples, the formula the question needs. It drops only chunks about a different topic. This gives the writer clean context, makes the hallucination check fairer, and, when nothing is relevant, **skips straight to web search** instead of wasting a Sonnet answer. *(A local 3B model was tried first and wrongly discarded 20 of 139 relevant chunks.)*
 2. **Generate** (Claude Sonnet). The answer is written only from the kept chunks, citing `(file, slide N)`, and streamed to the screen as it is written. The prompt depends on the intent (explanation, hint level 1 or 2, full solution) and on the source stage. If the sources don't contain enough, Sonnet replies `INSUFFICIENT_CONTEXT` instead of guessing; that text is never shown, and the loop moves to the next source.
 3. **Hallucination check** (Claude Haiku). Is every factual claim supported by the documents the answer was given? Calculations and standard reasoning steps don't need a source but must be correct. This check judges support only, not completeness, since a hint deliberately leaves things out. **If a claim is unsupported, the answer goes back to step 2** with that claim named, once. If it fails again, the next source is tried. When slide or exam images were attached, Sonnet does this check instead, because Haiku misread dense diagrams.
-4. **Answer check** (Claude Haiku). Runs only on an answer that passed step 3. Does it actually answer what was asked, every part of an exercise, rather than dodging or answering something else? For a **hint**, a stricter version asks whether it is useful *and* does not give the answer away. A hint that says too much **goes back to step 2** with the checker's comment, once. A full answer that doesn't answer the question needs better material, so it moves to the next source.
-5. **Next source.** In order: slide text → the same slides **with their figure images** (only if those slides contain diagrams) → **web search** (Haiku, at most 3 searches, returning detailed excerpts with URLs) → the **model's own knowledge**, clearly labelled so the student double-checks it. Each new source goes through steps 2–4 again.
+4. **Answer check** (Claude Haiku). Runs only on an answer that passed step 3. Does it actually answer what was asked, every part of an exercise, rather than dodging or answering something else? If not, the answer **goes to the next source** (step 5), usually web search: an answer that dodges the question needs better material, not another try with the same chunks. **Hints have no fallback:** a hint is checked with a stricter version (useful, and not giving the answer away), but whatever the result, it is returned to the student.
+5. **Next source.** In order: slide text → the same slides **with their figure images** (only if those slides contain diagrams) → **web search** (Haiku, at most 3 searches, returning detailed excerpts with URLs) → the **model's own knowledge**, clearly labelled so the student double-checks it. Each new source goes through steps 2–4 again. Hints never move to another source after step 4.
 
 **Also worth knowing:**
 
 - **Every answer is labelled** with its source: course slides, web search, or general knowledge.
 - **Figures.** OCR can't read diagrams. When a past-paper question refers to a figure, the scanned exam page is attached from the start. Slide diagrams are attached only as the fallback in step 5, which saves tokens on the many questions that don't need them.
-- **Hints.** Level 1 names the concept and the exact formula or rule, and asks a guiding question. Level 2 carries out the first step. Hints aren't streamed, so a hint rejected for giving too much away never appears on screen.
+- **Hints.** Level 1 names the concept and the exact formula or rule, and asks a guiding question. Level 2 carries out the first step. Hints are shown once both checks are done, not streamed, because a hint that fails the hallucination check is regenerated before you see it.
 - **Streaming.** A full answer appears while it is written, about 5–7 seconds after you ask, and both checks run after it is complete. In the rare case a check rejects it, the text is replaced by the corrected version.
 
 ---

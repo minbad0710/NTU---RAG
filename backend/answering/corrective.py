@@ -1,12 +1,11 @@
 """Corrective answer loop for Q&A and solve requests, as a LangGraph state graph.
 
     retrieve -> grade_documents --(some relevant)--> generate -> check_hallucination -> check_answer -> END
-                     |                                  ^  ^  |       | (not grounded:          |  | (hint gives
-                     | (none relevant)                  |  |  |       |  retry once)            |  |  too much:
-                     |                                  |  +--|-------+                         |  |  retry once)
-                     |                                  +-----|---------------------------------+  |
-                     +--------------> web_search <------------+--- (still failing, or doesn't -----+
-                                       / model_answer                answer the question)
+                     |                                  ^     |       | (not grounded:             | (doesn't answer;
+                     | (none relevant)                  |     |       |  retry once)               |  a hint is
+                     |                                  +-----|-------+                            |  returned as is)
+                     +--------------> web_search <------------+--- (still not grounded) -----------+
+                                       / model_answer
 
 Sources are tried in order: course slides, then one round of web search, then (rarely) the model's own knowledge.
 Claude Haiku does the small tasks (grading chunks, fetching web results, the checks); CLAUDE_MODEL writes answers.
@@ -29,7 +28,7 @@ IMAGE_CHECK_MODEL = settings.CLAUDE_MODEL  # hallucination check when slide imag
 # Haiku uses the basic tool variant. 5 searches gave the same accuracy on eval/datasets/solve_set.jsonl at ~2x the cost.
 WEB_SEARCH_TOOL = {"type": "web_search_20250305", "name": "web_search", "max_uses": 3}
 WEB_REPORT_TOKENS = 8000  # detailed excerpts, so the method is in the documents the answer is checked against
-MAX_GENERATE_RETRIES = 1  # regenerations per source after a failed hallucination check or a too-revealing hint
+MAX_GENERATE_RETRIES = 1  # regenerations per source after a failed hallucination check
 GRADE_CHARS = 2400  # the whole chunk: the relevant slide can come after unrelated ones (800 missed CRC)
 
 
@@ -261,11 +260,8 @@ def check_answer(state):
     ok, problem, note = answer_verdict(state)
     if ok:
         return {"trace": state["trace"] + [note], "failed": "", "feedback": ""}
-    # a hint that gives too much (or too little) is fixed by rewriting it with the checker's comment; more
-    # context (figures, the web) doesn't help. A full answer that dodges the question needs better sources.
-    hint = is_hint(state)
-    return {"trace": state["trace"] + [note], "failed": "answer", "feedback": problem if hint else "not answered",
-            "retries": state["retries"] + (1 if hint else 0)}
+    # a full answer that dodges the question needs better sources (next_source); a hint is returned as it is
+    return {"trace": state["trace"] + [note], "failed": "answer", "feedback": "not answered"}
 
 
 def model_answer(state):
@@ -311,9 +307,11 @@ def after_hallucination(state):
 
 
 def after_answer(state):
-    if not state["failed"]:
+    """Passed, or a hint (hints have no fallback: the student gets it either way): done. A full answer that
+    doesn't answer the question moves on to the next source."""
+    if not state["failed"] or is_hint(state):
         return "end"
-    return "generate" if is_hint(state) and state["retries"] <= MAX_GENERATE_RETRIES else next_source(state)
+    return next_source(state)
 
 
 def build():
