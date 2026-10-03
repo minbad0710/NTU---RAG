@@ -167,7 +167,7 @@ Details that matter:
 Explanations and exercises go through a self-checking loop built with LangGraph. It tries the cheapest trustworthy source first, checks the answer before it is final, and moves down to the next row only when an answer fails.
 
 <p align="center">
-  <img src="docs/corrective-loop.svg" width="100%" alt="Corrective answer loop. Row 1, course slides: retrieve, grade chunks, generate, hallucination check, answer check, answer. Row 2, slides plus figures: if unused slide diagrams are left, generate again with the images. Row 3, web: web search, generate, checks, answer. Row 4, model knowledge: generate and answer without checks. A failed answer drops to the row below." />
+  <img src="docs/answer-loop.svg" width="100%" alt="Corrective answer loop. Row 1, course slides: retrieve, grade chunks, generate, hallucination check, answer check, answer. Row 2, slides plus figures: if unused slide diagrams are left, generate again with the images. Row 3, web: web search, generate, checks, answer. Row 4, model knowledge: generate and answer without checks. A failed answer drops to the row below." />
 </p>
 
 Each row is one **source** of material, and each row ends in its own **Answer**. An answer that fails in one row drops to the row below: slide text, then the same slides with their figures, then the web, then (rarely) the model's own knowledge.

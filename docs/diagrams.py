@@ -296,7 +296,7 @@ def corrective_loop():
     d.line("M150 756H190", hint=True)
     d.text(200, 760, "Hints skip the answer check in every row: once grounded, a hint goes straight to the answer.",
            cls="s")
-    d.save("corrective-loop.svg")
+    d.save("answer-loop.svg")
 
 
 if __name__ == "__main__":
