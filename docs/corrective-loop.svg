@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1460 790" role="img" aria-label="Corrective answer loop: each source (slides, slides with figures, web, model knowledge) has its own row ending in an answer; a failed answer drops to the row below.">
+  <style>
+    :root { --bg:#ffffff; --panel:#f6f8fa; --line:#57606a; --text:#1f2328; --sub:#57606a; --lab:#57606a;
+            --gen:#fff4e5; --genB:#d97706; --chk:#eef4ff; --chkB:#3b6fd8; --ret:#e8f7ef; --retB:#1f9d63;
+            --ans:#ffffff; --ansB:#8c959f; --dec:#f5efff; --decB:#8250df; --hint:#1f9d63; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#0d1117; --panel:#161b22; --line:#8b949e; --text:#e6edf3; --sub:#9aa4af; --lab:#9aa4af;
+              --gen:#3a2716; --genB:#f0883e; --chk:#16233d; --chkB:#6e9bf5; --ret:#10301f; --retB:#3fb97a;
+              --ans:#1c2128; --ansB:#8b949e; --dec:#271c3d; --decB:#b392f0; --hint:#3fb97a; }
+    }
+    .panel { fill: var(--panel); }
+    .box { stroke-width: 1.6; }
+    .ret { fill: var(--ret); stroke: var(--retB); }
+    .gen { fill: var(--gen); stroke: var(--genB); }
+    .chk { fill: var(--chk); stroke: var(--chkB); }
+    .ans { fill: var(--ans); stroke: var(--ansB); }
+    .dec { fill: var(--dec); stroke: var(--decB); stroke-dasharray: 5 3; }
+    .t { fill: var(--text); font: 600 15px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .s { fill: var(--sub); font: 12.5px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .lab { fill: var(--lab); font: 12px ui-monospace, "SFMono-Regular", Consolas, monospace; }
+    .row { fill: var(--sub); font: 600 12.5px ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: .08em; }
+    .ln { stroke: var(--line); stroke-width: 1.5; fill: none; }
+    .hint { stroke: var(--hint); stroke-width: 1.5; fill: none; stroke-dasharray: 6 4; }
+    .hl { fill: var(--hint); font: 12px ui-monospace, "SFMono-Regular", Consolas, monospace; }
+    .ah { fill: var(--line); }
+    .ahh { fill: var(--hint); }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" class="ah" />
+    </marker>
+    <marker id="h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" class="ahh" />
+    </marker>
+  </defs>
+
+  <rect class="panel" x="0" y="0" width="1460" height="790" rx="14" />
+
+  <!-- row labels -->
+  <text class="row" x="24" y="106">1 · COURSE</text><text class="row" x="24" y="124">SLIDES</text>
+  <text class="row" x="24" y="296">2 · SLIDES +</text><text class="row" x="24" y="314">FIGURES</text>
+  <text class="row" x="24" y="496">3 · WEB</text>
+  <text class="row" x="24" y="676">4 · MODEL</text><text class="row" x="24" y="694">(RARE)</text>
+
+  <!-- ===== row 1: course slides (y 80) ===== -->
+  <rect class="box ret" x="150" y="80" width="170" height="62" rx="9" />
+  <text class="t" x="166" y="106">Retrieve</text><text class="s" x="166" y="126">hybrid search, top 6</text>
+  <rect class="box chk" x="370" y="80" width="170" height="62" rx="9" />
+  <text class="t" x="386" y="106">Grade chunks</text><text class="s" x="386" y="126">Haiku keeps relevant</text>
+  <rect class="box gen" x="590" y="80" width="170" height="62" rx="9" />
+  <text class="t" x="606" y="106">Generate</text><text class="s" x="606" y="126">Sonnet · slide text</text>
+  <rect class="box chk" x="810" y="80" width="170" height="62" rx="9" />
+  <text class="t" x="826" y="106">Hallucination check</text><text class="s" x="826" y="126">claims supported?</text>
+  <rect class="box chk" x="1030" y="80" width="170" height="62" rx="9" />
+  <text class="t" x="1046" y="106">Answer check</text><text class="s" x="1046" y="126">answers the question?</text>
+  <rect class="box ans" x="1250" y="80" width="170" height="62" rx="9" />
+  <text class="t" x="1266" y="106">Answer</text><text class="s" x="1266" y="126">from slides</text>
+
+  <path class="ln" d="M320 111H368" marker-end="url(#a)" />
+  <path class="ln" d="M540 111H588" marker-end="url(#a)" /><text class="lab" x="547" y="104">kept</text>
+  <path class="ln" d="M760 111H808" marker-end="url(#a)" /><text class="lab" x="764" y="104">draft</text>
+  <path class="ln" d="M980 111H1028" marker-end="url(#a)" /><text class="lab" x="993" y="104">ok</text>
+  <path class="ln" d="M1200 111H1248" marker-end="url(#a)" /><text class="lab" x="1210" y="104">yes</text>
+  <!-- retry loop -->
+  <path class="ln" d="M860 80V54H710V78" marker-end="url(#a)" />
+  <text class="lab" x="785" y="46" text-anchor="middle">not grounded: retry once with feedback</text>
+  <!-- hint shortcut -->
+  <path class="hint" d="M950 80V60H1335V78" marker-end="url(#h)" />
+  <text class="hl" x="1142" y="52" text-anchor="middle">hint: skip the answer check</text>
+  <!-- failures -> figures? -->
+  <path class="ln" d="M675 142V192" /><text class="lab" x="681" y="166">INSUFFICIENT</text>
+  <path class="ln" d="M895 142V192" /><text class="lab" x="901" y="166">still not grounded</text>
+  <path class="ln" d="M1115 142V192" /><text class="lab" x="1121" y="166">doesn't answer</text>
+  <path class="ln" d="M1115 192H455V268" marker-end="url(#a)" />
+  <!-- nothing relevant -> web -->
+  <path class="ln" d="M390 142V214H345V491H368" marker-end="url(#a)" />
+  <text class="lab" x="335" y="400" text-anchor="end">nothing</text><text class="lab" x="335" y="416" text-anchor="end">relevant</text>
+
+  <!-- ===== row 2: slides + figures (y 270) ===== -->
+  <rect class="box dec" x="370" y="270" width="170" height="62" rx="9" />
+  <text class="t" x="386" y="296">Figures left?</text><text class="s" x="386" y="316">unused slide diagrams</text>
+  <rect class="box gen" x="590" y="270" width="170" height="62" rx="9" />
+  <text class="t" x="606" y="296">Generate</text><text class="s" x="606" y="316">slide text + images</text>
+  <rect class="box chk" x="810" y="270" width="170" height="62" rx="9" />
+  <text class="t" x="826" y="296">Hallucination check</text><text class="s" x="826" y="316">Sonnet reads images</text>
+  <rect class="box chk" x="1030" y="270" width="170" height="62" rx="9" />
+  <text class="t" x="1046" y="296">Answer check</text><text class="s" x="1046" y="316">answers the question?</text>
+  <rect class="box ans" x="1250" y="270" width="170" height="62" rx="9" />
+  <text class="t" x="1266" y="296">Answer</text><text class="s" x="1266" y="316">from slides</text>
+
+  <path class="ln" d="M540 301H588" marker-end="url(#a)" /><text class="lab" x="550" y="294">yes</text>
+  <path class="ln" d="M760 301H808" marker-end="url(#a)" />
+  <path class="ln" d="M980 301H1028" marker-end="url(#a)" /><text class="lab" x="993" y="294">ok</text>
+  <path class="ln" d="M1200 301H1248" marker-end="url(#a)" /><text class="lab" x="1210" y="294">yes</text>
+  <path class="ln" d="M860 270V244H710V268" marker-end="url(#a)" />
+  <text class="lab" x="785" y="236" text-anchor="middle">not grounded: retry once</text>
+  <!-- no figures -> web -->
+  <path class="ln" d="M455 332V458" marker-end="url(#a)" />
+  <text class="lab" x="420" y="372">no (none,</text><text class="lab" x="420" y="388">or used)</text>
+  <!-- failures -> web -->
+  <path class="ln" d="M675 332V382" /><text class="lab" x="681" y="356">INSUFFICIENT</text>
+  <path class="ln" d="M895 332V382" /><text class="lab" x="901" y="356">still not grounded</text>
+  <path class="ln" d="M1115 332V382" /><text class="lab" x="1121" y="356">doesn't answer</text>
+  <path class="ln" d="M1115 382H505V458" marker-end="url(#a)" />
+
+  <!-- ===== row 3: web (y 460) ===== -->
+  <rect class="box chk" x="370" y="460" width="170" height="62" rx="9" />
+  <text class="t" x="386" y="486">Web search</text><text class="s" x="386" y="506">Haiku · ≤ 3 searches</text>
+  <rect class="box gen" x="590" y="460" width="170" height="62" rx="9" />
+  <text class="t" x="606" y="486">Generate</text><text class="s" x="606" y="506">from the web report</text>
+  <rect class="box chk" x="810" y="460" width="170" height="62" rx="9" />
+  <text class="t" x="826" y="486">Hallucination check</text><text class="s" x="826" y="506">vs the web report</text>
+  <rect class="box chk" x="1030" y="460" width="170" height="62" rx="9" />
+  <text class="t" x="1046" y="486">Answer check</text><text class="s" x="1046" y="506">answers the question?</text>
+  <rect class="box ans" x="1250" y="460" width="170" height="62" rx="9" />
+  <text class="t" x="1266" y="486">Answer</text><text class="s" x="1266" y="506">from web</text>
+
+  <path class="ln" d="M540 491H588" marker-end="url(#a)" /><text class="lab" x="545" y="484">found</text>
+  <path class="ln" d="M760 491H808" marker-end="url(#a)" />
+  <path class="ln" d="M980 491H1028" marker-end="url(#a)" /><text class="lab" x="993" y="484">ok</text>
+  <path class="ln" d="M1200 491H1248" marker-end="url(#a)" /><text class="lab" x="1210" y="484">yes</text>
+  <path class="ln" d="M860 460V434H710V458" marker-end="url(#a)" />
+  <text class="lab" x="785" y="426" text-anchor="middle">not grounded: retry once</text>
+  <!-- no results -> model -->
+  <path class="ln" d="M455 522V600H620V648" marker-end="url(#a)" />
+  <text class="lab" x="461" y="560">no results</text>
+  <!-- failures -> model -->
+  <path class="ln" d="M675 522V572" /><text class="lab" x="681" y="546">INSUFFICIENT</text>
+  <path class="ln" d="M895 522V572" /><text class="lab" x="901" y="546">still not grounded</text>
+  <path class="ln" d="M1115 522V572" /><text class="lab" x="1121" y="546">doesn't answer</text>
+  <path class="ln" d="M1115 572H675V648" marker-end="url(#a)" />
+
+  <!-- ===== row 4: model (y 650) ===== -->
+  <rect class="box gen" x="590" y="650" width="170" height="62" rx="9" />
+  <text class="t" x="606" y="676">Generate</text><text class="s" x="606" y="696">own knowledge, labelled</text>
+  <rect class="box ans" x="1250" y="650" width="170" height="62" rx="9" />
+  <text class="t" x="1266" y="676">Answer</text><text class="s" x="1266" y="696">from knowledge</text>
+  <path class="ln" d="M760 681H1248" marker-end="url(#a)" />
+  <text class="lab" x="1004" y="674" text-anchor="middle">no checks</text>
+
+  <!-- legend -->
+  <path class="hint" d="M150 756H190" marker-end="url(#h)" />
+  <text class="s" x="200" y="760">Hints skip the answer check in every row: once grounded, a hint goes straight to the answer.</text>
+</svg>
