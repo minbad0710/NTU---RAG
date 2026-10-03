@@ -71,7 +71,7 @@ There are four kinds of request (intents), detected with rules, no model call:
 ### 1. Ingestion: turning PDFs into a search index (offline)
 
 <p align="center">
-  <img src="docs/ingestion.svg" width="100%" alt="Ingestion: 64 slide decks are extracted and merged into chunks; 75 scanned past papers are OCR'd and split into question parts; both are embedded with bge-small and indexed with BM25." />
+  <img src="docs/build-index.svg" width="100%" alt="Ingestion: 64 slide decks are extracted and merged into chunks; 75 scanned past papers are OCR'd and split into question parts; both are embedded with bge-small and indexed with BM25." />
 </p>
 
 #### How lecture slides are chunked
@@ -137,7 +137,14 @@ Details that matter:
 
 - **What gets embedded is the file name plus the text** (`"01_Sorting.pdf\n[slide 8] ..."`), so deck titles such as "Deadlocks" or "Shortest Path" help matching.
 - **Slides and exam parts share one index** but are told apart by `kind`. A search asks for one kind: slides to answer from, or exam parts for past-year lookups and "similar past questions".
-- **At startup the index loads into memory** (about 0.3 s) and builds three helpers: the **BM25 keyword index** over the same text, word document-frequencies for the broad-question score, and arrays of each chunk's course and kind so a search can be limited to one course.
+- **At startup the index loads into memory** (under a second) and builds three helpers: the **BM25 keyword index** over the same text, word document-frequencies for the broad-question score, and arrays of each chunk's course and kind so a search can be limited to one course.
+- **Why the keyword index isn't saved.** Only the embeddings are saved to disk; the BM25 index is rebuilt from `chunks.json` each time the server starts. That is deliberate:
+  - **Rebuilding is almost free.** BM25 is word counting (which chunks contain each word, and how often): about 0.5 s for 1,879 chunks. Embeddings are the opposite: running the model over every chunk took about 3.5 minutes on this laptop's CPU, so they are computed once and saved.
+  - **It can never go stale.** Built from the same `chunks.json` the search returns, it always matches the chunks exactly. A saved copy could silently fall out of step after a rebuild, and keyword search would point at the wrong chunks without any error.
+  - **Settings take effect on restart.** `BM25_K1`, `BM25_B` and the tokeniser can be changed and compared without re-running ingestion.
+  - **One less file** to save, version and keep in sync, and no extra format or package.
+
+  At a much larger scale (hundreds of thousands of chunks) the rebuild would take noticeable time, and saving it, or using a search engine that keeps it on disk, would become worthwhile.
 - **Search is brute force:** one numpy matrix multiply compares the query with all 1,879 vectors in under a millisecond. At this size a vector database would only add moving parts.
 - **Exact references bypass search.** "AY2526 S2 Q1(15)" is looked up directly by year, semester, question and part (`Index.find_exam`), never by similarity.
 - **Rebuild after changing `data/`.** The tutor searches this saved copy, not the PDFs. Re-run `ocr_papers` (it skips papers already done) and then `build_index`.

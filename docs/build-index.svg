@@ -68,9 +68,11 @@
   <path class="ln" d="M980 101.0H1248" marker-end="url(#a)" />
   <path class="ln" d="M980 261.0H1248" marker-end="url(#a)" />
   <rect class="box ans" x="1250" y="70" width="170" height="62" rx="9" />
-  <text class="t" x="1266" y="96.0">Index on disk</text><text class="s" x="1266" y="116.0">vectors.npy + chunks</text>
+  <text class="t" x="1266" y="96.0">Saved to disk</text><text class="s" x="1266" y="116.0">vectors.npy + chunks</text>
   <rect class="box ans" x="1250" y="230" width="170" height="62" rx="9" />
-  <text class="t" x="1266" y="256.0">Built at startup</text><text class="s" x="1266" y="276.0">in memory, ~0.3 s</text>
-  <text class="lab" x="990" y="94.0">1,879 chunks: 962 slide + 917 exam</text>
-  <text class="lab" x="990" y="254.0">same text, exact terms</text>
+  <text class="t" x="1266" y="256.0">Not saved</text><text class="s" x="1266" y="276.0">rebuilt at startup</text>
+  <text class="lab" x="990" y="94.0">slow (~3.5 min): computed once</text>
+  <text class="lab" x="990" y="120.0">1,879 chunks: 962 slide + 917 exam</text>
+  <text class="lab" x="990" y="254.0">fast (~0.5 s): from chunks.json</text>
+  <text class="lab" x="990" y="280.0">in memory, at every start</text>
 </svg>

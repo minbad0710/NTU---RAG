@@ -151,11 +151,13 @@ def ingestion():
     d.box(COLS[3], r2, "Keyword index", "BM25")
     d.line(f"M{COLS[3] + W} {r1 + H / 2}H{COLS[5] - 2}")
     d.line(f"M{COLS[3] + W} {r2 + H / 2}H{COLS[5] - 2}")
-    d.box(COLS[5], r1, "Index on disk", "vectors.npy + chunks", "ans")
-    d.box(COLS[5], r2, "Built at startup", "in memory, ~0.3 s", "ans")
-    d.text(COLS[3] + W + 10, r1 + H / 2 - 7, "1,879 chunks: 962 slide + 917 exam")
-    d.text(COLS[3] + W + 10, r2 + H / 2 - 7, "same text, exact terms")
-    d.save("ingestion.svg")
+    d.box(COLS[5], r1, "Saved to disk", "vectors.npy + chunks", "ans")
+    d.box(COLS[5], r2, "Not saved", "rebuilt at startup", "ans")
+    d.text(COLS[3] + W + 10, r1 + H / 2 - 7, "slow (~3.5 min): computed once")
+    d.text(COLS[3] + W + 10, r1 + H / 2 + 19, "1,879 chunks: 962 slide + 917 exam")
+    d.text(COLS[3] + W + 10, r2 + H / 2 - 7, "fast (~0.5 s): from chunks.json")
+    d.text(COLS[3] + W + 10, r2 + H / 2 + 19, "in memory, at every start")
+    d.save("build-index.svg")
 
 
 def routing():
