@@ -1,0 +1,31 @@
+# Secrets
+.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Course material (copyrighted slides, large files)
+data/
+
+# OCR output of past papers (derived from copyrighted material; rebuild with: python -m backend.ingest.ocr_papers)
+ocr/
+
+# Generated search index (rebuild with: python -m backend.ingest.build_index)
+index/
+
+# Cached model outputs of the eval scripts (they quote the course material)
+eval/results/
+
+# Frontend build output and dependencies
+frontend/node_modules/
+frontend/dist/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+demo/

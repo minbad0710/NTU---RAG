@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- NTU course RAG: a lecture page being searched (retrieval) on the app's navy-to-teal tile -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1e3a8a" />
+      <stop offset="1" stop-color="#0e98a6" />
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#tile)" />
+  <!-- the page, with a folded corner and text lines -->
+  <path d="M15 10h18l9 9v26a4 4 0 0 1-4 4H15a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4z" fill="#ffffff" />
+  <path d="M33 10v7a2 2 0 0 0 2 2h7z" fill="#b8e6ec" />
+  <rect x="17" y="24" width="18" height="3.5" rx="1.75" fill="#0e98a6" />
+  <rect x="17" y="31" width="14" height="3.5" rx="1.75" fill="#7fb4dd" />
+  <rect x="17" y="38" width="9" height="3.5" rx="1.75" fill="#7fb4dd" />
+  <!-- the magnifier finding it -->
+  <circle cx="42" cy="41" r="10" fill="#1e3a8a" stroke="#00e1ff" stroke-width="4.5" />
+  <circle cx="42" cy="41" r="3.5" fill="#00e1ff" />
+  <path d="M49.5 48.5 56 55" stroke="#00e1ff" stroke-width="5.5" stroke-linecap="round" />
+</svg>
