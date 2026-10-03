@@ -39,9 +39,9 @@
   <text class="row" x="24" y="486">3 · WEB</text>
   <text class="row" x="24" y="676">4 · MODEL</text>
   <text class="row" x="24" y="694">(RARE)</text>
-  <text class="s" x="180" y="115.0">retrieved</text>
-  <text class="s" x="180" y="131.0">chunks</text>
-  <path class="ln" d="M255 111.0H368" marker-end="url(#a)" />
+  <rect class="box inp" x="150" y="80" width="170" height="62" rx="9" />
+  <text class="t" x="166" y="106.0">Retrieve</text><text class="s" x="166" y="126.0">hybrid search, top 6</text>
+  <path class="ln" d="M320 111.0H368" marker-end="url(#a)" />
   <rect class="box chk" x="370" y="80" width="170" height="62" rx="9" />
   <text class="t" x="386" y="106.0">Grade chunks</text><text class="s" x="386" y="126.0">Haiku keeps relevant</text>
   <path class="ln" d="M540 111.0H588" marker-end="url(#a)" />

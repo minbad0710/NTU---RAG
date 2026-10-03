@@ -264,8 +264,8 @@ def corrective_loop():
         d.line(f"M{COLS[4] + 85} {y + H + 50}H{to_x}V{to_y - 2}")
 
     # row 1
-    d.text(COLS[0] + 30, r1 + H / 2 + 4, "retrieved\nchunks", cls="s")
-    d.line(f"M{COLS[0] + 105} {r1 + H / 2}H{COLS[1] - 2}")
+    d.box(COLS[0], r1, "Retrieve", "hybrid search, top 6", "inp")
+    d.right(0, r1)
     d.box(COLS[1], r1, "Grade chunks", "Haiku keeps relevant")
     d.right(1, r1, "kept")
     checked_row(r1, "Sonnet · slide text", "claims supported?", "from slides", "not grounded: retry once with feedback")
