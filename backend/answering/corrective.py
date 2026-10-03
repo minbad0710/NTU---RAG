@@ -1,18 +1,20 @@
 """Corrective answer loop for Q&A and solve requests, as a LangGraph state graph.
 
-    retrieve -> grade_documents --(some relevant)--> generate -> check -------------------------------> END
-                     |                                  ^  |       | (not grounded, or a hint that      | (doesn't
-                     | (none relevant)                  |  |       |  gives too much: retry once)        |  answer)
-                     +--------------> web_search -------+  +-------+---------> web_search / model_answer <+
+    retrieve -> grade_documents --(some relevant)--> generate -> check_hallucination -> check_answer -> END
+                     |                                  ^  ^  |       | (not grounded:          |  | (hint gives
+                     | (none relevant)                  |  |  |       |  retry once)            |  |  too much:
+                     |                                  |  +--|-------+                         |  |  retry once)
+                     |                                  +-----|---------------------------------+  |
+                     +--------------> web_search <------------+--- (still failing, or doesn't -----+
+                                       / model_answer                answer the question)
 
 Sources are tried in order: course slides, then one round of web search, then (rarely) the model's own knowledge.
 Claude Haiku does the small tasks (grading chunks, fetching web results, the checks); CLAUDE_MODEL writes answers.
-The check node runs the hallucination check and the answers-the-question check at the same time. Each answer attempt
-can be streamed to the caller as it is written (see Draft).
+The checks run one after the other: the answers-the-question check only runs on an answer that passed the
+hallucination check. Each answer attempt can be streamed to the caller as it is written (see Draft).
 """
 import json
 import re
-from concurrent.futures import ThreadPoolExecutor
 from typing import TypedDict
 
 from langchain_core.runnables import RunnableConfig
@@ -245,21 +247,25 @@ def answer_verdict(state):
     return verdict["answers_question"], verdict["problem"], note
 
 
-def check(state):
-    """Both checks at once (they are independent); a failed hallucination check takes precedence."""
-    with ThreadPoolExecutor(2) as pool:
-        grounded, answers = pool.submit(grounded_verdict, state), pool.submit(answer_verdict, state)
-        (g_ok, g_problem, g_note), (a_ok, a_problem, a_note) = grounded.result(), answers.result()
-    trace = state["trace"] + [g_note, a_note]
-    if not g_ok:
-        return {"trace": trace, "failed": "grounded", "feedback": g_problem, "retries": state["retries"] + 1}
-    if not a_ok:
-        # a hint that gives too much (or too little) is fixed by rewriting it with the checker's comment; more
-        # context (figures, the web) doesn't help. A full answer that dodges the question needs better sources.
-        hint = is_hint(state)
-        return {"trace": trace, "failed": "answer", "feedback": a_problem if hint else "not answered",
-                "retries": state["retries"] + (1 if hint else 0)}
-    return {"trace": trace, "failed": "", "feedback": ""}
+def check_hallucination(state):
+    """Is every claim in the answer supported by the documents? If not, generate tries again with the problem."""
+    ok, problem, note = grounded_verdict(state)
+    if ok:
+        return {"trace": state["trace"] + [note], "failed": "", "feedback": ""}
+    return {"trace": state["trace"] + [note], "failed": "grounded", "feedback": problem,
+            "retries": state["retries"] + 1}
+
+
+def check_answer(state):
+    """Runs only on a grounded answer: does it answer what was asked (for a hint: useful, not giving it away)?"""
+    ok, problem, note = answer_verdict(state)
+    if ok:
+        return {"trace": state["trace"] + [note], "failed": "", "feedback": ""}
+    # a hint that gives too much (or too little) is fixed by rewriting it with the checker's comment; more
+    # context (figures, the web) doesn't help. A full answer that dodges the question needs better sources.
+    hint = is_hint(state)
+    return {"trace": state["trace"] + [note], "failed": "answer", "feedback": problem if hint else "not answered",
+            "retries": state["retries"] + (1 if hint else 0)}
 
 
 def model_answer(state):
@@ -295,20 +301,26 @@ def after_web(state):
 def after_generate(state):
     if state["source"] != "model" and settings.INSUFFICIENT in state["generation"][:200]:
         return next_source(state)
-    return "end" if state["source"] == "model" else "check"
+    return "end" if state["source"] == "model" else "check_hallucination"
 
 
-def after_check(state):
+def after_hallucination(state):
+    if not state["failed"]:
+        return "check_answer"
+    return "generate" if state["retries"] <= MAX_GENERATE_RETRIES else next_source(state)
+
+
+def after_answer(state):
     if not state["failed"]:
         return "end"
-    retry = state["failed"] == "grounded" or is_hint(state)
-    return "generate" if retry and state["retries"] <= MAX_GENERATE_RETRIES else next_source(state)
+    return "generate" if is_hint(state) and state["retries"] <= MAX_GENERATE_RETRIES else next_source(state)
 
 
 def build():
     g = StateGraph(State)
     for name, fn in [("retrieve", retrieve), ("grade_documents", grade_documents), ("web_search", web_search),
-                     ("generate", generate), ("check", check), ("model_answer", model_answer),
+                     ("generate", generate), ("check_hallucination", check_hallucination),
+                     ("check_answer", check_answer), ("model_answer", model_answer),
                      ("add_slide_images", add_slide_images)]:
         g.add_node(name, fn)
     g.add_edge(START, "retrieve")
@@ -316,11 +328,12 @@ def build():
     g.add_conditional_edges("grade_documents", after_grade, ["generate", "web_search"])
     g.add_conditional_edges("web_search", after_web, ["generate", "model_answer"])
     g.add_conditional_edges("generate", after_generate,
-                            {"check": "check", "web_search": "web_search", "model_answer": "model_answer",
-                             "add_slide_images": "add_slide_images", "end": END})
-    g.add_conditional_edges("check", after_check, {"end": END, "generate": "generate", "web_search": "web_search",
-                                                   "model_answer": "model_answer",
-                                                   "add_slide_images": "add_slide_images"})
+                            {"check_hallucination": "check_hallucination", "web_search": "web_search",
+                             "model_answer": "model_answer", "add_slide_images": "add_slide_images", "end": END})
+    sources = {"generate": "generate", "web_search": "web_search", "model_answer": "model_answer",
+               "add_slide_images": "add_slide_images"}
+    g.add_conditional_edges("check_hallucination", after_hallucination, {"check_answer": "check_answer", **sources})
+    g.add_conditional_edges("check_answer", after_answer, {"end": END, **sources})
     g.add_edge("model_answer", "generate")
     g.add_edge("add_slide_images", "generate")
     return g.compile()
